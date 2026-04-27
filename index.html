@@ -3,85 +3,1504 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hearth - あなただけの、静かな場所</title>
+  <title>Hearth - 声にすると、見えてくる。</title>
+  <meta name="description" content="AIメンターとの音声対話で、毎日の自分を整える。朝は宣言し、夜は振り返る。Hearthは、あなただけの静かな場所。">
+  <meta property="og:title" content="Hearth - 声にすると、見えてくる。">
+  <meta property="og:description" content="AIメンターとの音声対話で、毎日の自分を整える。朝は宣言し、夜は振り返る。">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Hearth">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hearth - 声にすると、見えてくる。">
+  <meta name="twitter:description" content="AIメンターとの音声対話で、毎日の自分を整える。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #4A90D9;
+      --accent: #6366F1;
+      --brand-warm: #E8760A;
+      --brand-glow: #F6AD55;
+      --warm-bg: #F8F7F4;
+      --warm-bg-alt: #F5F3EF;
+      --text: #1F2937;
+      --text-sub: #6B7280;
+      --text-light: #9CA3AF;
+      --white: #FFFFFF;
+      --border: #E5E7EB;
+      --success: #059669;
+      --font-ja: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+      --font-en: 'Inter', sans-serif;
+      --max-w: 1120px;
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #F9FAFB;
-      color: #1F2937;
+      font-family: var(--font-ja);
+      color: var(--text);
+      background: var(--warm-bg);
       line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-    header {
-      background: #fff;
-      border-bottom: 1px solid #E5E7EB;
-      padding: 20px 24px;
-      text-align: center;
+    img { max-width: 100%; height: auto; display: block; }
+    a { text-decoration: none; color: inherit; }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+    /* ===== SVG Icon Base ===== */
+    .icon-box {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px; flex-shrink: 0;
     }
-    header h1 {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1F2937;
+
+    /* ===== Nav ===== */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(248,247,244,0.88);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: box-shadow .3s;
     }
-    header p {
-      font-size: 14px;
-      color: #6B7280;
-      margin-top: 4px;
+    .nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
+    .nav-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 24px;
+      height: 60px; display: flex; align-items: center; justify-content: space-between;
     }
-    main {
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 0 24px;
+    .nav-logo {
+      font-family: var(--font-en); font-size: 22px; font-weight: 700;
+      letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px;
     }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 32px 24px;
-      margin-bottom: 16px;
-      border: 1px solid #E5E7EB;
+    .nav-logo-text { letter-spacing: -0.5px; }
+    .nav-logo-text span { color: var(--brand-warm); }
+    .nav-logo img { width: 28px; height: 28px; border-radius: 7px; }
+    .nav-cta {
+      padding: 9px 22px; background: var(--text); color: var(--white);
+      border-radius: 100px; font-size: 13px; font-weight: 600;
+      transition: transform .2s, box-shadow .2s;
     }
-    .card h2 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 12px;
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+    /* ===== Floating CTA ===== */
+    .floating-cta {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 99;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(0,0,0,0.06);
+      padding: 10px 24px calc(10px + env(safe-area-inset-bottom, 0px));
+      transform: translateY(100%);
+      transition: transform .4s cubic-bezier(.16,1,.3,1);
     }
-    .card p {
-      font-size: 15px;
-      color: #374151;
+    .floating-cta.visible { transform: translateY(0); }
+    .floating-cta-inner {
+      max-width: 460px; margin: 0 auto;
+      display: flex; align-items: center; gap: 10px; justify-content: center;
     }
-    .card a {
-      color: #4A90D9;
-      text-decoration: none;
+    .floating-cta .btn-fl {
+      flex: 1; max-width: 190px; padding: 11px 0;
+      background: var(--text); color: var(--white);
+      border-radius: 12px; font-size: 13px; font-weight: 600;
+      text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: transform .2s;
     }
-    .card a:hover {
-      text-decoration: underline;
+    .floating-cta .btn-fl:hover { transform: translateY(-1px); }
+    .floating-cta .btn-fl-disabled {
+      background: #ECEAE6; color: var(--text-light); cursor: default; font-size: 12px;
     }
-    footer {
-      text-align: center;
-      padding: 40px 24px;
-      font-size: 13px;
-      color: #9CA3AF;
+    .floating-cta .btn-fl-disabled:hover { transform: none; }
+
+    /* ===== Section Shared ===== */
+    .sec-label {
+      font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+      color: var(--brand-warm); margin-bottom: 10px;
+    }
+    .sec-title {
+      font-size: 28px; font-weight: 700; line-height: 1.45; margin-bottom: 14px;
+    }
+    .sec-desc {
+      font-size: 15px; color: var(--text-sub); line-height: 1.85;
+      max-width: 540px; margin-bottom: 48px;
+    }
+    .sec-desc.center { margin-left: auto; margin-right: auto; }
+    .fade-up {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up.d1 { transition-delay: .1s; }
+    .fade-up.d2 { transition-delay: .2s; }
+    .fade-up.d3 { transition-delay: .3s; }
+    .fade-scale {
+      opacity: 0; transform: translateY(20px) scale(0.97);
+      transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+    }
+    .fade-scale.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* ===== Hero ===== */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 110px 24px 80px;
+      background: linear-gradient(180deg, var(--warm-bg) 0%, #EDE9E3 100%);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -160px; right: -160px;
+      width: 480px; height: 480px;
+      background: radial-gradient(circle, rgba(232,118,10,0.05) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-inner {
+      max-width: var(--max-w); margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .hero-text { max-width: 480px; }
+    .hero-tagline {
+      font-size: 42px; font-weight: 700; line-height: 1.3;
+      letter-spacing: -0.5px; margin-bottom: 20px;
+    }
+    .hero-tagline em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--brand-warm), var(--primary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub { font-size: 16px; line-height: 1.9; color: var(--text-sub); margin-bottom: 36px; }
+    .hero-cta-group { display: flex; flex-direction: column; gap: 14px; }
+    .hero-store-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 15px 32px; background: var(--text); color: var(--white);
+      border-radius: 14px; font-size: 15px; font-weight: 600;
+      transition: transform .2s, box-shadow .2s; border: none; cursor: pointer;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+    .btn-android-hero {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 15px 22px; background: #ECEAE6; color: var(--text-light);
+      border-radius: 14px; font-size: 14px; font-weight: 500; cursor: default;
+    }
+    .hero-micro { font-size: 13px; color: var(--text-sub); }
+    .hero-micro strong { color: var(--brand-warm); font-weight: 600; }
+    .hero-visual { display: flex; justify-content: center; position: relative; }
+    .hero-phone {
+      position: relative;
+      width: 270px; height: 560px; border-radius: 38px; overflow: hidden;
+      box-shadow: 0 32px 64px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
+      background: #000;
+    }
+    .hero-phone img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-phone-glow {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 340px; height: 640px;
+      background: radial-gradient(ellipse, rgba(232,118,10,0.06) 0%, transparent 70%);
+      z-index: -1;
+    }
+
+    /* ===== Pain ===== */
+    .pain { padding: 80px 24px; background: var(--white); }
+    .pain-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+    .pain-card {
+      padding: 32px 28px; background: var(--warm-bg); border-radius: 18px;
+      border: 1px solid transparent;
+      transition: border-color .3s, transform .3s, box-shadow .3s;
+    }
+    .pain-card:hover { border-color: rgba(232,118,10,0.15); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+    .pain-card:nth-child(1) .icon-box { background: rgba(246,173,85,0.12); }
+    .pain-card:nth-child(2) .icon-box { background: rgba(99,102,241,0.08); }
+    .pain-card:nth-child(3) .icon-box { background: rgba(74,144,217,0.08); }
+    .pain-card:nth-child(4) .icon-box { background: rgba(156,163,175,0.12); }
+    .pain-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; line-height: 1.5; }
+    .pain-card p { font-size: 14px; color: var(--text-sub); line-height: 1.7; }
+
+    /* ===== How ===== */
+    .how { padding: 96px 24px; background: var(--warm-bg); text-align: center; }
+    .how .sec-title, .how .sec-desc { text-align: center; }
+    .how-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 48px; }
+    .how-card {
+      position: relative; border-radius: 24px; overflow: hidden;
+      color: var(--white); min-height: 320px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 36px 28px;
+    }
+    .how-card::before {
+      content: ''; position: absolute; inset: 0; z-index: 1;
+    }
+    .how-card > * { position: relative; z-index: 2; }
+    .how-morning {
+      background: linear-gradient(160deg, rgba(246,173,85,0.88), rgba(200,100,20,0.92)),
+                  url('assets/backgrounds/morning.webp') center/cover no-repeat;
+    }
+    .how-night {
+      background: linear-gradient(160deg, rgba(80,100,200,0.85), rgba(30,40,60,0.92)),
+                  url('assets/backgrounds/night.webp') center/cover no-repeat;
+    }
+    .how-weekly {
+      background: linear-gradient(160deg, rgba(5,150,105,0.85), rgba(6,95,70,0.92)),
+                  url('assets/backgrounds/daytime.webp') center/cover no-repeat;
+    }
+    .how-card .how-icon {
+      width: 52px; height: 52px; border-radius: 16px;
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .how-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .how-time { font-size: 12px; opacity: .75; font-weight: 500; margin-bottom: 14px; }
+    .how-card p { font-size: 14px; line-height: 1.75; opacity: .9; }
+
+    /* ===== Mid CTA ===== */
+    .mid-cta {
+      padding: 40px 24px; text-align: center;
+      background: var(--white);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .mid-cta.alt { background: var(--warm-bg); }
+    .mid-cta-inner {
+      max-width: 460px; margin: 0 auto;
+      display: flex; align-items: center; gap: 10px; justify-content: center; flex-wrap: wrap;
+    }
+    .mid-cta p { width: 100%; font-size: 14px; color: var(--text-sub); margin-bottom: 6px; }
+    .mid-cta .btn-primary { font-size: 14px; padding: 12px 26px; }
+    .mid-cta .btn-sm-disabled {
+      padding: 12px 18px; background: #ECEAE6; color: var(--text-light);
+      border-radius: 12px; font-size: 12px; font-weight: 500; cursor: default;
+    }
+
+    /* ===== Mentors ===== */
+    .mentors { padding: 80px 24px; background: var(--warm-bg); text-align: center; }
+    .mentor-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 32px; margin-top: 48px; }
+    .mentor-card {
+      background: var(--white); border-radius: 24px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      transition: transform .3s, box-shadow .3s;
+    }
+    @media (hover: hover) { .mentor-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); } }
+    .mentor-vis {
+      position: relative; height: 360px; overflow: hidden;
+    }
+    .mentor-vis .mentor-bg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; opacity: 0.45; filter: blur(1px);
+    }
+    .mentor-vis .mentor-char {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      height: 95%; object-fit: contain;
+      filter: drop-shadow(0 4px 20px rgba(0,0,0,0.15));
+    }
+    .mentor-info { padding: 28px; text-align: left; }
+    .mentor-name-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .mentor-name { font-size: 22px; font-weight: 700; }
+    .mentor-tag { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+    .mentor-card:nth-child(1) .mentor-tag { background: rgba(246,173,85,0.15); color: #C05621; }
+    .mentor-card:nth-child(2) .mentor-tag { background: rgba(99,102,241,0.1); color: var(--accent); }
+    .mentor-age { font-size: 13px; color: var(--text-sub); margin-bottom: 12px; }
+    .mentor-desc { font-size: 14px; color: var(--text-sub); line-height: 1.8; margin-bottom: 16px; }
+    .mentor-quote {
+      padding: 14px 18px; background: var(--warm-bg); border-radius: 14px;
+      font-size: 13px; line-height: 1.7; border-left: 3px solid var(--brand-warm);
+      font-style: italic;
+    }
+
+    /* ===== Features ===== */
+    .features { padding: 80px 24px; background: var(--white); }
+    .feat-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
+      align-items: center; margin-bottom: 72px;
+    }
+    .feat-row:last-of-type { margin-bottom: 0; }
+    .feat-row.rev { direction: rtl; }
+    .feat-row.rev > * { direction: ltr; }
+    .feat-content h3 { font-size: 24px; font-weight: 700; margin-bottom: 12px; line-height: 1.4; }
+    .feat-content p { font-size: 15px; color: var(--text-sub); line-height: 1.8; margin-bottom: 20px; }
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .feat-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: var(--text-sub); line-height: 1.6;
+    }
+    .feat-check {
+      flex-shrink: 0; width: 20px; height: 20px; border-radius: 6px;
+      background: rgba(5,150,105,0.1);
+      display: flex; align-items: center; justify-content: center; margin-top: 2px;
+    }
+    .feat-visual { display: flex; justify-content: center; }
+    .feat-phone {
+      width: 250px; height: 516px; border-radius: 36px; overflow: hidden;
+      box-shadow: 0 24px 56px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+      background: #000;
+    }
+    .feat-phone img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Personalization embedded */
+    .feat-persona {
+      margin-top: 72px; padding: 48px 40px; border-radius: 28px;
+      background: linear-gradient(135deg, #1F2937, #111827);
+      color: var(--white); position: relative; overflow: hidden;
+    }
+    .feat-persona::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(232,118,10,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .feat-persona > * { position: relative; z-index: 1; }
+    .feat-persona .sec-label { color: var(--brand-glow); }
+    .feat-persona h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+    .feat-persona > p { font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.8; margin-bottom: 36px; }
+    .persona-steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+    .persona-step { text-align: center; }
+    .persona-icon {
+      width: 52px; height: 52px; border-radius: 16px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .persona-step h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    .persona-step p { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+    /* ===== Demo Tabs ===== */
+    .demo-tabs {
+      display: flex; gap: 8px; justify-content: center; margin-bottom: 24px;
+    }
+    .demo-tab {
+      padding: 8px 20px; border-radius: 100px; border: 1.5px solid var(--border);
+      background: var(--white); font-family: var(--font-ja); font-size: 13px; font-weight: 600;
+      color: var(--text-sub); cursor: pointer; transition: all .2s;
+    }
+    .demo-tab.active {
+      background: var(--text); color: var(--white); border-color: var(--text);
+    }
+    .demo-panel { display: none; }
+    .demo-panel.active { display: flex; flex-direction: column; gap: 12px; }
+
+    /* ===== Trial Badge ===== */
+    .trial-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 14px; background: rgba(5,150,105,0.08); color: var(--success);
+      border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 16px;
+    }
+    .trial-note {
+      text-align: center; font-size: 13px; color: var(--text-sub); margin-top: 24px;
+      max-width: 500px; margin-left: auto; margin-right: auto;
+    }
+
+    /* ===== Lead Capture ===== */
+    .lead {
+      padding: 56px 24px; background: #ECEAE6; text-align: center;
+    }
+    .lead-inner {
+      max-width: 480px; margin: 0 auto; padding: 36px 32px;
+      background: var(--white); border-radius: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+    .lead-inner h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .lead-inner p { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; line-height: 1.7; }
+    .lead-form {
+      display: flex; gap: 8px; max-width: 360px; margin: 0 auto;
+    }
+    .lead-form input {
+      flex: 1; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 12px;
+      font-family: var(--font-ja); font-size: 14px; outline: none;
+      transition: border-color .2s;
+    }
+    .lead-form input:focus { border-color: var(--brand-warm); }
+    .lead-form button {
+      padding: 12px 20px; background: var(--brand-warm); color: var(--white);
+      border: none; border-radius: 12px; font-family: var(--font-ja);
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: transform .2s, background .2s; white-space: nowrap;
+    }
+    .lead-form button:hover { transform: translateY(-1px); background: #D06A08; }
+    .lead-note { font-size: 11px; color: var(--text-light); margin-top: 12px; }
+
+    /* ===== Conversation Demo ===== */
+    .demo { padding: 80px 24px; background: var(--white); }
+    .demo-inner { max-width: 580px; margin: 0 auto; }
+    .demo-chat { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; }
+    .demo-bubble {
+      max-width: 82%; padding: 14px 18px; border-radius: 18px;
+      font-size: 14px; line-height: 1.75;
+    }
+    .demo-ai {
+      align-self: flex-start; background: var(--warm-bg);
+      border-bottom-left-radius: 6px; color: var(--text);
+    }
+    .demo-user {
+      align-self: flex-end; background: var(--primary); color: var(--white);
+      border-bottom-right-radius: 6px;
+    }
+    .demo-ai-label, .demo-user-label {
+      font-size: 11px; font-weight: 600; color: var(--text-light); margin-bottom: 4px;
+    }
+    .demo-user-label { text-align: right; }
+    .demo-note {
+      text-align: center; margin-top: 24px; font-size: 13px; color: var(--text-light);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+
+    /* ===== Compare Table ===== */
+    .compare-table {
+      width: 100%; border-collapse: collapse; margin-top: 32px;
+      font-size: 13px; text-align: center;
+    }
+    .compare-table th, .compare-table td {
+      padding: 12px 10px; border-bottom: 1px solid var(--border);
+    }
+    .compare-table th { font-weight: 600; color: var(--text-sub); font-size: 12px; }
+    .compare-table th:first-child, .compare-table td:first-child { text-align: left; font-weight: 600; color: var(--text); }
+    .compare-table td { color: var(--text-sub); }
+    .compare-table .col-hearth { background: rgba(232,118,10,0.04); color: var(--brand-warm); font-weight: 600; }
+    .compare-table th.col-hearth { color: var(--brand-warm); }
+    .compare-table tr:last-child td { border-bottom: none; }
+
+    /* ===== Pricing Step ===== */
+    .pricing-step {
+      display: flex; align-items: center; justify-content: center; gap: 0;
+      max-width: 520px; margin: 0 auto 32px; font-size: 13px;
+    }
+    .pricing-step-item { flex: 1; text-align: center; position: relative; }
+    .pricing-step-dot {
+      width: 10px; height: 10px; border-radius: 50%; margin: 0 auto 8px;
+    }
+    .pricing-step-item:nth-child(1) .pricing-step-dot { background: var(--success); }
+    .pricing-step-item:nth-child(2) .pricing-step-dot { background: var(--brand-warm); }
+    .pricing-step-item:nth-child(3) .pricing-step-dot { background: var(--primary); }
+    .pricing-step-label { font-weight: 600; color: var(--text); font-size: 13px; margin-bottom: 2px; }
+    .pricing-step-sub { font-size: 11px; color: var(--text-light); }
+    .pricing-step-line {
+      position: absolute; top: 5px; left: calc(50% + 8px); right: -50%;
+      height: 2px; background: var(--border);
+    }
+    .pricing-step-item:last-child .pricing-step-line { display: none; }
+
+    /* ===== Mid CTA Coach Line ===== */
+    .mid-cta-coach {
+      font-size: 13px; color: var(--text-sub); margin-bottom: 4px;
+    }
+    .mid-cta-coach strong { color: var(--brand-warm); font-weight: 700; }
+
+    /* ===== Why Hearth ===== */
+    .why { padding: 80px 24px; background: var(--warm-bg); }
+    .why-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 48px; }
+    .why-card {
+      padding: 32px 24px; background: var(--white); border-radius: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+    }
+    .why-card .icon-box { margin-bottom: 14px; }
+    .why-card:nth-child(1) .icon-box { background: rgba(232,118,10,0.08); }
+    .why-card:nth-child(2) .icon-box { background: rgba(99,102,241,0.08); }
+    .why-card:nth-child(3) .icon-box { background: rgba(5,150,105,0.08); }
+    .why-card h4 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .why-card p { font-size: 14px; color: var(--text-sub); line-height: 1.75; }
+
+    /* ===== Voices ===== */
+    .voices { padding: 80px 24px; background: var(--white); }
+    .voices-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; margin-top: 48px; }
+    .voice-card {
+      background: var(--white); border-radius: 20px; padding: 28px 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+      transition: transform .3s, box-shadow .3s;
+    }
+    @media (hover: hover) { .voice-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.06); } }
+    .voice-stars { display: flex; gap: 2px; margin-bottom: 14px; }
+    .voice-stars svg { color: #FBBF24; }
+    .voice-text { font-size: 14px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
+    .voice-user { display: flex; align-items: center; gap: 10px; }
+    .voice-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-warm), var(--primary));
+      display: flex; align-items: center; justify-content: center;
+      color: var(--white); font-size: 14px; font-weight: 600;
+    }
+    .voice-meta .voice-name { font-size: 13px; font-weight: 600; }
+    .voice-meta .voice-attr { font-size: 11px; color: var(--text-light); }
+
+    /* ===== Privacy ===== */
+    .privacy { padding: 72px 24px; background: var(--white); text-align: center; }
+    .privacy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 40px; }
+    .priv-item { padding: 32px 24px; background: var(--warm-bg); border-radius: 18px; text-align: center; }
+    .priv-item .icon-box { margin: 0 auto 16px; }
+    .priv-item:nth-child(1) .icon-box { background: rgba(99,102,241,0.08); }
+    .priv-item:nth-child(2) .icon-box { background: rgba(232,118,10,0.08); }
+    .priv-item:nth-child(3) .icon-box { background: rgba(5,150,105,0.08); }
+    .priv-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .priv-item p { font-size: 13px; color: var(--text-sub); line-height: 1.7; }
+
+    /* ===== Pricing ===== */
+    .pricing { padding: 80px 24px; background: var(--warm-bg); text-align: center; }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 24px;
+      max-width: 680px; margin: 40px auto 0;
+    }
+    .price-card {
+      padding: 36px 28px; border-radius: 22px; border: 2px solid var(--border);
+      background: var(--white); position: relative; text-align: center;
+      transition: border-color .3s, transform .3s;
+    }
+    .price-card.pop {
+      border-color: var(--brand-warm);
+      background: linear-gradient(180deg, rgba(232,118,10,0.02), var(--white));
+      transform: scale(1.02);
+    }
+    @media (hover: hover) { .price-card:hover { transform: translateY(-2px); } .price-card.pop:hover { transform: scale(1.02) translateY(-2px); } }
+    .price-badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      padding: 4px 18px; background: var(--brand-warm); color: var(--white);
+      border-radius: 100px; font-size: 11px; font-weight: 700; white-space: nowrap;
+    }
+    .price-plan { font-size: 14px; font-weight: 600; color: var(--text-sub); margin-bottom: 12px; }
+    .price-amount { font-size: 38px; font-weight: 700; font-family: var(--font-en); margin-bottom: 2px; }
+    .price-amount span { font-size: 15px; font-weight: 500; color: var(--text-sub); }
+    .price-note { font-size: 13px; color: var(--text-sub); margin-bottom: 14px; }
+    .price-offer {
+      display: inline-block; padding: 5px 14px;
+      background: rgba(232,118,10,0.1); color: var(--brand-warm);
+      border-radius: 8px; font-size: 12px; font-weight: 600; margin-bottom: 12px;
+    }
+    .price-daily { font-size: 12px; color: var(--text-light); margin-bottom: 18px; }
+    .price-features { list-style: none; text-align: left; display: flex; flex-direction: column; gap: 8px; }
+    .price-features li {
+      font-size: 13px; color: var(--text-sub); display: flex; align-items: center; gap: 8px;
+    }
+    .price-features .pf-check {
+      flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%;
+      background: rgba(5,150,105,0.1);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ===== Final CTA ===== */
+    .final-cta {
+      padding: 112px 24px; text-align: center;
+      background: linear-gradient(180deg, var(--warm-bg), #E8E4DE);
+      position: relative; overflow: hidden;
+    }
+    .final-cta::before {
+      content: ''; position: absolute; bottom: -100px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(232,118,10,0.06) 0%, transparent 70%);
+    }
+    .final-inner { max-width: 560px; margin: 0 auto; position: relative; z-index: 1; }
+    .final-tagline { font-size: 32px; font-weight: 700; line-height: 1.45; margin-bottom: 16px; }
+    .final-tagline em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--brand-warm), var(--primary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .final-desc { font-size: 16px; color: var(--text-sub); line-height: 1.8; margin-bottom: 32px; }
+    .final-store { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .final-micro { font-size: 13px; color: var(--text-sub); margin-top: 14px; }
+    .final-micro strong { color: var(--brand-warm); font-weight: 600; }
+
+    /* ===== FAQ ===== */
+    .faq { padding: 72px 24px; background: var(--warm-bg); }
+    .faq-list { max-width: 680px; margin: 40px auto 0; display: flex; flex-direction: column; gap: 12px; }
+    .faq-item {
+      background: var(--white); border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--border); transition: border-color .2s;
+    }
+    .faq-q {
+      width: 100%; padding: 20px 24px; display: flex; justify-content: space-between;
+      align-items: center; cursor: pointer; border: none; background: none;
+      font-family: var(--font-ja); font-size: 15px; font-weight: 600;
+      color: var(--text); text-align: left;
+    }
+    .faq-q svg { flex-shrink: 0; transition: transform .3s; color: var(--text-light); }
+    .faq-item.open .faq-q svg { transform: rotate(180deg); }
+    .faq-item.open { border-color: rgba(232,118,10,0.2); }
+    .faq-a {
+      max-height: 0; overflow: hidden; transition: max-height .35s ease;
+    }
+    .faq-a-inner {
+      padding: 0 24px 20px; font-size: 14px; color: var(--text-sub); line-height: 1.8;
+    }
+    .faq-item.open .faq-a { max-height: 300px; }
+
+    /* ===== Footer ===== */
+    .footer { padding: 40px 24px; background: var(--text); color: rgba(255,255,255,0.6); }
+    .footer-inner {
+      max-width: var(--max-w); margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    }
+    .footer-logo { font-family: var(--font-en); font-size: 20px; font-weight: 700; color: var(--white); }
+    .footer-logo span { color: var(--brand-warm); }
+    .footer-links { display: flex; gap: 20px; list-style: none; }
+    .footer-links a { font-size: 13px; color: rgba(255,255,255,0.5); transition: color .2s; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-copy {
+      width: 100%; text-align: center; font-size: 12px; margin-top: 20px;
+      padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ===== Responsive ===== */
+    /* ===== Tablet ===== */
+    @media (max-width: 1024px) {
+      .hero-inner { gap: 36px; }
+      .hero-tagline { font-size: 34px; }
+      .mentor-grid { gap: 24px; }
+      .feat-row { gap: 40px; }
+    }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 768px) {
+      /* -- Hero -- */
+      .hero { padding: 76px 16px 36px; min-height: auto; }
+      .hero-inner { grid-template-columns: 1fr; gap: 0; text-align: center; }
+      .hero-text { max-width: 100%; order: 1; }
+      .hero-tagline { font-size: 26px; line-height: 1.35; margin-bottom: 12px; }
+      .hero-sub { font-size: 14px; margin-bottom: 24px; }
+      .hero-cta-group { margin-bottom: 32px; }
+      .hero-store-row {
+        flex-direction: column; align-items: center; gap: 10px;
+      }
+      .btn-primary { width: 100%; max-width: 280px; justify-content: center; padding: 14px 24px; font-size: 14px; }
+      .btn-android-hero { width: 100%; max-width: 280px; justify-content: center; padding: 12px 24px; font-size: 12px; }
+      .hero-micro { text-align: center; font-size: 12px; }
+      .hero-visual { order: 2; margin-top: 0; }
+      .hero-phone { width: 200px; height: 414px; border-radius: 32px; }
+      .hero-phone-glow { width: 260px; height: 480px; }
+
+      /* -- Nav -- */
+      .nav-inner { padding: 0 16px; height: 56px; }
+      .nav-logo { font-size: 20px; gap: 6px; }
+      .nav-logo img { width: 24px; height: 24px; border-radius: 6px; }
+      .nav-cta { padding: 8px 16px; font-size: 12px; }
+
+      /* -- Floating CTA -- */
+      .floating-cta { padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
+      .floating-cta-inner { flex-direction: column; gap: 6px; }
+      .floating-cta .btn-fl { max-width: 100%; width: 100%; padding: 12px 0; font-size: 14px; }
+      .floating-cta .btn-fl-disabled { padding: 8px 0; font-size: 11px; }
+
+      /* -- Shared -- */
+      .sec-title { font-size: 22px; }
+      .sec-label { font-size: 12px; }
+      .sec-desc { font-size: 14px; margin-bottom: 36px; }
+
+      /* -- Pain -- */
+      .pain { padding: 48px 16px; }
+      .pain-grid { grid-template-columns: 1fr; gap: 12px; }
+      .pain-card { padding: 24px 20px; }
+      .pain-card h3 { font-size: 15px; }
+
+      /* -- How -- */
+      .how { padding: 48px 16px; }
+      .how-cards { grid-template-columns: 1fr; gap: 16px; }
+      .how-card { min-height: auto; padding: 28px 24px; border-radius: 20px; }
+
+      /* -- Mid CTA -- */
+      .mid-cta { padding: 28px 16px; }
+      .mid-cta-inner { flex-direction: column; gap: 10px; }
+      .mid-cta .btn-primary { width: 100%; max-width: 280px; justify-content: center; }
+      .mid-cta .btn-sm-disabled { width: 100%; max-width: 280px; text-align: center; padding: 10px 16px; }
+      .mid-cta-coach { font-size: 12px; }
+
+      /* -- Mentors -- */
+      .mentors { padding: 48px 16px; }
+      .mentor-grid { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; gap: 20px; }
+      .mentor-vis { height: 260px; }
+      .mentor-info { padding: 24px 20px; }
+      .mentor-name { font-size: 20px; }
+      .mentor-desc { font-size: 13px; }
+      .mentor-quote { font-size: 12px; padding: 12px 14px; }
+
+      /* -- Features -- */
+      .features { padding: 48px 16px; }
+      .feat-row, .feat-row.rev { grid-template-columns: 1fr; gap: 28px; direction: ltr; }
+      .feat-row { margin-bottom: 56px; }
+      .feat-visual { order: -1; }
+      .feat-phone { width: 190px; height: 393px; border-radius: 30px; }
+      .feat-content h3 { font-size: 20px; }
+      .feat-content p { font-size: 14px; }
+      .feat-persona { padding: 28px 20px; margin-top: 48px; border-radius: 22px; }
+      .feat-persona h3 { font-size: 20px; }
+      .feat-persona > p { font-size: 14px; margin-bottom: 28px; }
+      .persona-steps { grid-template-columns: repeat(2,1fr); gap: 16px; }
+      .persona-icon { width: 44px; height: 44px; border-radius: 12px; }
+
+      /* -- Demo -- */
+      .demo { padding: 48px 16px; }
+      .demo-tabs { flex-wrap: wrap; gap: 6px; justify-content: center; }
+      .demo-tab { padding: 7px 16px; font-size: 12px; }
+      .demo-bubble { max-width: 90%; font-size: 13px; padding: 12px 16px; }
+      .demo-note { font-size: 12px; }
+
+      /* -- Why Hearth -- */
+      .why { padding: 48px 16px; }
+      .why-grid { grid-template-columns: 1fr; max-width: 100%; gap: 16px; }
+      .why-card { padding: 24px 20px; }
+      .why-card h4 { font-size: 15px; }
+      .why-card p { font-size: 13px; }
+      .compare-table { font-size: 11px; margin-top: 28px; }
+      .compare-table th, .compare-table td { padding: 10px 5px; }
+
+      /* -- Voices -- */
+      .voices { padding: 48px 16px; }
+      .voices-grid { grid-template-columns: 1fr; max-width: 100%; gap: 16px; }
+      .voice-card { padding: 24px 20px; }
+      .voice-text { font-size: 13px; }
+
+      /* -- Privacy -- */
+      .privacy { padding: 48px 16px; }
+      .privacy-grid { grid-template-columns: 1fr; max-width: 100%; gap: 12px; }
+      .priv-item { padding: 24px 20px; }
+
+      /* -- Pricing -- */
+      .pricing { padding: 48px 16px; }
+      .pricing-step { max-width: 100%; }
+      .pricing-step-label { font-size: 12px; }
+      .pricing-step-sub { font-size: 10px; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 100%; gap: 16px; }
+      .price-card { padding: 28px 20px; }
+      .price-card.pop { transform: none; }
+      .price-amount { font-size: 32px; }
+      .trial-note { font-size: 12px; }
+
+      /* -- FAQ -- */
+      .faq { padding: 48px 16px; }
+      .faq-q { padding: 16px 20px; font-size: 14px; }
+      .faq-a-inner { padding: 0 20px 16px; font-size: 13px; }
+
+      /* -- Final CTA -- */
+      .final-cta { padding: 56px 16px; }
+      .final-tagline { font-size: 24px; }
+      .final-desc { font-size: 15px; }
+      .final-store { flex-direction: column; align-items: center; gap: 10px; }
+      .final-store .btn-primary { width: 100%; max-width: 280px; justify-content: center; }
+      .final-store .btn-android-hero { width: 100%; max-width: 280px; justify-content: center; }
+      .final-micro { font-size: 12px; }
+
+      /* -- Lead -- */
+      .lead { padding: 36px 16px; }
+      .lead-inner { padding: 28px 20px; border-radius: 20px; }
+      .lead-inner h3 { font-size: 16px; }
+      .lead-inner p { font-size: 13px; }
+      .lead-form { flex-direction: column; }
+
+      /* -- Footer -- */
+      .footer { padding: 32px 16px; }
+      .footer-inner { flex-direction: column; text-align: center; gap: 12px; }
+      .footer-links { justify-content: center; flex-wrap: wrap; gap: 16px; }
+      .footer-copy { margin-top: 16px; padding-top: 16px; }
+    }
+
+    /* ===== Small Mobile ===== */
+    @media (max-width: 380px) {
+      .hero-tagline { font-size: 24px; }
+      .hero-phone { width: 180px; height: 374px; }
+      .sec-title { font-size: 20px; }
+      .persona-steps { grid-template-columns: 1fr; }
+      .compare-table { font-size: 10px; }
+      .compare-table th, .compare-table td { padding: 8px 4px; }
+      .price-amount { font-size: 28px; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Hearth</h1>
-    <p>あなただけの、静かな場所</p>
-  </header>
-  <main>
-    <div class="card">
-      <h2>Hearthについて</h2>
-      <p>Hearthは、AIとの声の対話を通じて自分を深めるメンタリングアプリです。毎朝の目標設定、毎晩の振り返り、自由な相談を通じて、日々をより良いものにします。</p>
+
+  <!-- Nav -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <img src="assets/icon.png" alt="Hearth" width="28" height="28"><div class="nav-logo-text"><span>H</span>earth</div>
+      </div>
+      <a href="#download" class="nav-cta">App Store</a>
     </div>
-    <div class="card">
-      <h2>リンク</h2>
-      <p><a href="/privacy">プライバシーポリシー</a></p>
-      <p><a href="/support">サポート・お問い合わせ</a></p>
+  </nav>
+
+  <!-- Floating CTA -->
+  <div class="floating-cta" id="floatingCta">
+    <div class="floating-cta-inner">
+      <a href="#download" class="btn-fl">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.89C10.1 6.87 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+        7日間無料で試す
+      </a>
+      <div class="btn-fl btn-fl-disabled">Android 準備中</div>
     </div>
-  </main>
-  <footer>
-    &copy; 2026 Hearth. All rights reserved.
+  </div>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <h1 class="hero-tagline fade-up">声にすると、<br><em>見えてくる。</em></h1>
+        <p class="hero-sub fade-up d1">AIメンターとの音声対話が、<br>あなたの毎日を静かに整えていく。</p>
+        <div class="hero-cta-group fade-up d2">
+          <div class="hero-store-row">
+            <a href="#download" class="btn-primary">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.89C10.1 6.87 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+              7日間無料で試す
+            </a>
+            <div class="btn-android-hero">Android 準備中</div>
+          </div>
+          <p class="hero-micro"><strong>7日間完全無料</strong> / 合わなければいつでもキャンセル</p>
+        </div>
+      </div>
+      <div class="hero-visual fade-scale d1">
+        <div class="hero-phone-glow"></div>
+        <div class="hero-phone">
+          <img src="assets/screenshot/resized_Simulator Screenshot - iPhone 15 Plus - 2026-04-10 at 21.13.03.png" alt="Hearth ホーム画面" loading="eager">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Pain ===== -->
+  <section class="pain">
+    <div class="container">
+      <div class="sec-label">こんな毎日に、心当たりは？</div>
+      <h2 class="sec-title">なんとなく、満たされない日々</h2>
+      <p class="sec-desc">忙しさの中で自分を見失いそうになる。<br>そんな感覚は、あなただけのものではありません。</p>
+      <div class="pain-grid">
+        <div class="pain-card fade-up">
+          <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8760A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          </div>
+          <h3>朝、何から手をつければいいかわからない</h3>
+          <p>予定は詰まっているのに、一番大事なことが見えない。</p>
+        </div>
+        <div class="pain-card fade-up d1">
+          <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          </div>
+          <h3>「今日も何もできなかった」と感じる夜</h3>
+          <p>変わりたいのに、何をすればいいかわからない。</p>
+        </div>
+        <div class="pain-card fade-up d2">
+          <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A90D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3>まわりと比べてしまう焦り</h3>
+          <p>活躍する同世代を見て、自分だけ取り残されている気がする。</p>
+        </div>
+        <div class="pain-card fade-up d3">
+          <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+          </div>
+          <h3>言葉にできないモヤモヤ</h3>
+          <p>悪くないはずなのに、満たされない。その違和感の正体がわからない。</p>
+        </div>
+        <div class="pain-card fade-up d2" style="grid-column: 1 / -1; max-width: 100%;">
+          <div class="icon-box" style="background: rgba(232,118,10,0.08);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8760A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3>相談される側なのに、自分が相談できる相手がいない</h3>
+          <p>部下や後輩の悩みには向き合える。でも、自分の悩みを打ち明ける場所がない。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== How (Solution + Cycle merged) ===== -->
+  <section class="how">
+    <div class="container">
+      <div class="sec-label">Hearthの使い方</div>
+      <h2 class="sec-title">話すだけで、自分が整う</h2>
+      <p class="sec-desc center">日記は続かなくても、会話なら続く。<br>朝と夜、たった5分の対話が習慣になります。</p>
+      <div class="how-cards">
+        <div class="how-card how-morning fade-up">
+          <div class="how-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          </div>
+          <h3>朝セッション</h3>
+          <div class="how-time">約5分 / 毎朝</div>
+          <p>今日やりたいことを声にする。<br>意図を持って一日をはじめられます。</p>
+        </div>
+        <div class="how-card how-night fade-up d1">
+          <div class="how-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          </div>
+          <h3>夜セッション</h3>
+          <div class="how-time">約7分 / 毎晩</div>
+          <p>一日を振り返り、できたこと・感じたことを言葉に。明日への学びが蓄積されます。</p>
+        </div>
+        <div class="how-card how-weekly fade-up d2">
+          <div class="how-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          </div>
+          <h3>週次レポート</h3>
+          <div class="how-time">毎週日曜 / 自動生成</div>
+          <p>1週間の対話をAIが分析。あなたのパターンと変化をレポートで届けます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mid CTA 1 -->
+  <div class="mid-cta">
+    <div class="mid-cta-inner">
+      <p>声に出す、テキストで打つ。どちらでもOK</p>
+      <a href="#download" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.89C10.1 6.87 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+        7日間無料で試す
+      </a>
+      <div class="btn-sm-disabled">Android 準備中</div>
+    </div>
+  </div>
+
+  <!-- ===== Mentors ===== -->
+  <section class="mentors">
+    <div class="container" style="text-align:center;">
+      <div class="sec-label">2人のAIメンター</div>
+      <h2 class="sec-title">あなたに寄り添うパートナー</h2>
+      <p class="sec-desc center">ビジネス経験豊富な2人のAIメンターから、<br>あなたに合うタイプを選べます。いつでも切り替え可能。</p>
+      <div class="mentor-grid">
+        <div class="mentor-card fade-up">
+          <div class="mentor-vis">
+            <img class="mentor-bg" src="assets/backgrounds/evening.webp" alt="" loading="lazy">
+            <img class="mentor-char" src="assets/images/rei_neutral.webp" alt="レイ" loading="lazy">
+          </div>
+          <div class="mentor-info">
+            <div class="mentor-name-row">
+              <div class="mentor-name">レイ</div>
+              <div class="mentor-tag">共感型</div>
+            </div>
+            <div class="mentor-age">知的で行動派。気持ちに寄り添いながら、行動を後押し</div>
+            <p class="mentor-desc">感情に寄り添い、あなたの考えを一緒に深掘りすることが得意。温かみのある対話で、自然と本音が引き出されます。</p>
+            <div class="mentor-quote">
+              「わかります、それは大変でしたよね。その上で聞いてもいいですか？ 今日、一番うれしかった瞬間はどんな時でしたか？」
+            </div>
+          </div>
+        </div>
+        <div class="mentor-card fade-up d1">
+          <div class="mentor-vis">
+            <img class="mentor-bg" src="assets/backgrounds/night.webp" alt="" loading="lazy">
+            <img class="mentor-char" src="assets/images/ken_neutral.webp" alt="ケン" loading="lazy">
+          </div>
+          <div class="mentor-info">
+            <div class="mentor-name-row">
+              <div class="mentor-name">ケン</div>
+              <div class="mentor-tag">論理型</div>
+            </div>
+            <div class="mentor-age">論理的で構造的。頭の中を整理し、次の一手を明確に</div>
+            <p class="mentor-desc">論理と整理で、思考を明確にし次の一手を見つける。構造的な問いかけで、頭の中がクリアになります。</p>
+            <div class="mentor-quote">
+              「なるほど、整理すると3つのポイントがありますね。この中で、まず取り組むとしたらどれにしますか？」
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Features ===== -->
+  <section class="features">
+    <div class="container">
+      <!-- Voice Session -->
+      <div class="feat-row">
+        <div class="feat-content fade-up">
+          <div class="sec-label">音声対話</div>
+          <h3>声で話すから、深い対話になる</h3>
+          <p>テキストでは出てこない本音が、声にするとスルッと出てくる。表情が変わるキャラクターとの没入体験。</p>
+          <ul class="feat-list">
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>音声認識で自然な会話（テキスト入力も可）</li>
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>7種の感情表現で寄り添うキャラクター</li>
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>会話からタスクを自動抽出</li>
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>フリートーク・相談モードも搭載</li>
+          </ul>
+        </div>
+        <div class="feat-visual fade-scale">
+          <div class="feat-phone"><img src="assets/screenshot/resized_Simulator Screenshot - iPhone 15 Plus - 2026-04-10 at 21.05.02.png" alt="セッション画面" loading="lazy"></div>
+        </div>
+      </div>
+      <!-- Tasks -->
+      <div class="feat-row rev">
+        <div class="feat-content fade-up">
+          <div class="sec-label">タスク管理</div>
+          <h3>会話から「やること」が生まれる</h3>
+          <p>セッション中の会話からAIがタスクを自動提案。Googleカレンダーとも連携できます。</p>
+          <ul class="feat-list">
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>会話からタスクを自動抽出・提案</li>
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>未完了タスクの翌日繰り越し</li>
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Googleカレンダー双方向同期</li>
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>リマインダーで忘れない</li>
+          </ul>
+        </div>
+        <div class="feat-visual fade-scale">
+          <div class="feat-phone"><img src="assets/screenshot/resized_Simulator Screenshot - iPhone 15 Plus - 2026-04-10 at 21.12.44.png" alt="タスク管理画面" loading="lazy"></div>
+        </div>
+      </div>
+      <!-- Weekly Report -->
+      <div class="feat-row">
+        <div class="feat-content fade-up">
+          <div class="sec-label">週次レポート</div>
+          <h3>毎週、自分の変化が見える</h3>
+          <p>1週間の対話をAIが分析。あなただけのレポートを自動生成します。</p>
+          <ul class="feat-list">
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>今週のあなた（傾向分析）</li>
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>行動とタスクの成果レビュー</li>
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>思考パターンの可視化</li>
+            <li><span class="feat-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>来週への「問い」の提示</li>
+          </ul>
+        </div>
+        <div class="feat-visual fade-scale">
+          <div class="feat-phone"><img src="assets/screenshot/resized_Simulator Screenshot - iPhone 15 Plus - 2026-04-10 at 21.12.49.png" alt="週次レポート画面" loading="lazy"></div>
+        </div>
+      </div>
+      <!-- Personalization -->
+      <div class="feat-persona fade-up">
+        <div class="sec-label">パーソナライズ</div>
+        <h3>使うほど、あなた専用になっていく</h3>
+        <p>毎回の対話を蓄積・統合し、あなたへの理解を深め続けます。</p>
+        <div class="persona-steps">
+          <div class="persona-step">
+            <div class="persona-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+            </div>
+            <h4>対話する</h4>
+            <p>朝夜の会話であなたの考えを共有</p>
+          </div>
+          <div class="persona-step">
+            <div class="persona-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            </div>
+            <h4>理解が蓄積</h4>
+            <p>価値観・強み・課題をAIが学習</p>
+          </div>
+          <div class="persona-step">
+            <div class="persona-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <h4>対話が深化</h4>
+            <p>過去の文脈を踏まえた問いかけに</p>
+          </div>
+          <div class="persona-step">
+            <div class="persona-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8Z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2Z"/></svg>
+            </div>
+            <h4>変化を実感</h4>
+            <p>週次レポートで成長を客観視</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Conversation Demo ===== -->
+  <section class="demo">
+    <div class="container">
+      <div style="text-align:center;">
+        <div class="sec-label">対話のイメージ</div>
+        <h2 class="sec-title">実際の夜セッションの一例</h2>
+        <p class="sec-desc center">声でもテキストでも、あなたのペースで対話できます。<br>こんな会話が、毎晩5分で行われています。</p>
+      </div>
+      <div class="demo-inner">
+        <div class="demo-tabs">
+          <button class="demo-tab active" onclick="switchDemo('career')">キャリアの悩み</button>
+          <button class="demo-tab" onclick="switchDemo('mgmt')">マネジメントの悩み</button>
+        </div>
+        <div class="demo-panel active" id="demo-career">
+          <div>
+            <div class="demo-ai-label">レイ</div>
+            <div class="demo-bubble demo-ai">おつかれさまです。今日はどんな1日でしたか？</div>
+          </div>
+          <div>
+            <div class="demo-user-label">あなた</div>
+            <div class="demo-bubble demo-user">提案資料を仕上げたんだけど、なんか手応えがなくて...上司のフィードバックも曖昧で。</div>
+          </div>
+          <div>
+            <div class="demo-ai-label">レイ</div>
+            <div class="demo-bubble demo-ai">資料を仕上げたこと自体、まずお疲れさまです。「手応えがない」って、具体的にはどんな感覚ですか？</div>
+          </div>
+          <div>
+            <div class="demo-user-label">あなた</div>
+            <div class="demo-bubble demo-user">うーん...自分の考えが本当に入ってるのか、わからなくなってきた。言われた通りに作っただけな気がして。</div>
+          </div>
+          <div>
+            <div class="demo-ai-label">レイ</div>
+            <div class="demo-bubble demo-ai">なるほど。「自分の考えが入っているか」がモヤモヤの正体かもしれませんね。もし明日、1箇所だけ「自分の意見」を足すとしたら、どこに入れたいですか？</div>
+          </div>
+        </div>
+        <div class="demo-panel" id="demo-mgmt">
+          <div>
+            <div class="demo-ai-label">ケン</div>
+            <div class="demo-bubble demo-ai">おつかれさまです。今日、一番印象に残っていることは何ですか？</div>
+          </div>
+          <div>
+            <div class="demo-user-label">あなた</div>
+            <div class="demo-bubble demo-user">部下のAさんが最近元気がなくて。でも本人は「大丈夫です」としか言わなくて、どう接したらいいか悩んでます。</div>
+          </div>
+          <div>
+            <div class="demo-ai-label">ケン</div>
+            <div class="demo-bubble demo-ai">Aさんのことを気にかけているんですね。「大丈夫です」の裏にある気持ちに気づいている時点で、すでに良い上司だと思います。一つ確認させてください。Aさんの変化に気づいたのはいつ頃からですか？</div>
+          </div>
+          <div>
+            <div class="demo-user-label">あなた</div>
+            <div class="demo-bubble demo-user">2週間くらい前からかな...会議での発言が減った気がして。</div>
+          </div>
+          <div>
+            <div class="demo-ai-label">ケン</div>
+            <div class="demo-bubble demo-ai">2週間前から会議での発言が減った。具体的な変化を捉えていますね。整理すると、今の課題は「Aさんの本音を引き出すこと」と「自分のアプローチへの自信のなさ」、どちらが大きいですか？</div>
+          </div>
+        </div>
+        <div class="demo-note">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+          音声入力またはテキスト入力。どちらでも対話できます。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Why Hearth ===== -->
+  <section class="why">
+    <div class="container">
+      <div style="text-align:center;">
+        <div class="sec-label">Hearthが選ばれる理由</div>
+        <h2 class="sec-title">ChatGPTでも日記でもない、新しい習慣</h2>
+        <p class="sec-desc center">ただのAIチャットとは違う。<br>「続く仕組み」と「深まる理解」が、Hearthの価値です。</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-card fade-up">
+          <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8760A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h4>朝と夜のリズムが習慣をつくる</h4>
+          <p>「いつでも使える」は逆に続かない。朝5分・夜7分の決まったリズムだから、歯磨きのように自然と習慣になります。</p>
+        </div>
+        <div class="why-card fade-up d1">
+          <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"/></svg>
+          </div>
+          <h4>使うほど「あなた専用」になる</h4>
+          <p>ChatGPTは毎回ゼロから。Hearthは対話のたびにあなたへの理解を蓄積。先週の文脈を踏まえた問いかけが届きます。</p>
+        </div>
+        <div class="why-card fade-up d2">
+          <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h4>AIだから、本音が出せる</h4>
+          <p>人に弱みを見せるのが苦手でも大丈夫。AIだから恥ずかしさゼロ、24時間いつでも、あなただけの秘密の対話です。</p>
+        </div>
+      </div>
+      <table class="compare-table fade-up" style="max-width:600px; margin:40px auto 0;">
+        <thead>
+          <tr>
+            <th></th>
+            <th>ChatGPT</th>
+            <th>対面コーチング</th>
+            <th class="col-hearth">Hearth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>月額費用</td>
+            <td>無料〜$20</td>
+            <td>¥30,000〜</td>
+            <td class="col-hearth">¥1,980</td>
+          </tr>
+          <tr>
+            <td>対話の蓄積</td>
+            <td>毎回リセット</td>
+            <td>コーチが記憶</td>
+            <td class="col-hearth">自動で蓄積・深化</td>
+          </tr>
+          <tr>
+            <td>習慣化の仕組み</td>
+            <td>なし</td>
+            <td>月1-2回</td>
+            <td class="col-hearth">毎日・朝夜リズム</td>
+          </tr>
+          <tr>
+            <td>利用時間</td>
+            <td>24時間</td>
+            <td>予約制</td>
+            <td class="col-hearth">24時間・予約不要</td>
+          </tr>
+          <tr>
+            <td>本音の出しやすさ</td>
+            <td>-</td>
+            <td>人間相手で緊張</td>
+            <td class="col-hearth">AI相手で気楽</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Mid CTA 2 -->
+  <div class="mid-cta alt">
+    <div class="mid-cta-inner">
+      <p class="mid-cta-coach">対面コーチング<strong>月3〜5万円</strong>と同じ手法を、<strong>月1,980円</strong>で。</p>
+      <p>7日間、無料ですべての機能を体験できます</p>
+      <a href="#download" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.89C10.1 6.87 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+        7日間無料で試す
+      </a>
+      <div class="btn-sm-disabled">Android 準備中</div>
+    </div>
+  </div>
+
+  <!-- ===== User Voices (4 people, ★4 mixed, 40s included) ===== -->
+  <section class="voices">
+    <div class="container">
+      <div style="text-align:center;">
+        <div class="sec-label">ユーザーの声</div>
+        <h2 class="sec-title">Hearthを使っている方の体験</h2>
+        <p class="sec-desc center">毎日の対話が、少しずつ日常を変えていく。</p>
+      </div>
+      <div class="voices-grid">
+        <div class="voice-card fade-up">
+          <div class="voice-stars">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="voice-text">朝セッションを始めてから、通勤電車の中で「今日やること」が自然と頭に浮かぶようになりました。以前は漠然と不安だった朝が、今は少し楽しみに変わっています。</p>
+          <div class="voice-user">
+            <div class="voice-avatar">T</div>
+            <div class="voice-meta">
+              <div class="voice-name">T.Kさん</div>
+              <div class="voice-attr">30代 / IT企業 PM / 利用3ヶ月</div>
+            </div>
+          </div>
+        </div>
+        <div class="voice-card fade-up d1">
+          <div class="voice-stars">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#E5E7EB" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="voice-text">正直、最初は「AIに話して意味あるの？」と半信半疑でした。でも2週目あたりから、自分の口癖や思考のクセに気づけるように。週次レポートの客観的な分析が特に良いです。</p>
+          <div class="voice-user">
+            <div class="voice-avatar">K</div>
+            <div class="voice-meta">
+              <div class="voice-name">K.Mさん</div>
+              <div class="voice-attr">40代 / メーカー 管理職 / 利用2ヶ月</div>
+            </div>
+          </div>
+        </div>
+        <div class="voice-card fade-up d2">
+          <div class="voice-stars">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="voice-text">友達にはなかなか話せないキャリアの本音を、ここでは素直に出せました。ジャーナリングは3日で挫折した私が、声で話すだけなので2ヶ月続いています。自分でも驚いてます。</p>
+          <div class="voice-user">
+            <div class="voice-avatar">M</div>
+            <div class="voice-meta">
+              <div class="voice-name">M.Sさん</div>
+              <div class="voice-attr">20代 / 企画職 / 利用2ヶ月</div>
+            </div>
+          </div>
+        </div>
+        <div class="voice-card fade-up d3">
+          <div class="voice-stars">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="voice-text">ケンの論理的な問いかけが自分に合っています。週次レポートで「また同じことで悩んでたのか」と気づけるだけで、次の行動が変わりました。寝る前のベッドの中で、テキストで使っています。</p>
+          <div class="voice-user">
+            <div class="voice-avatar">Y</div>
+            <div class="voice-meta">
+              <div class="voice-name">Y.Hさん</div>
+              <div class="voice-attr">30代 / メーカー 営業 / 利用4ヶ月</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Privacy ===== -->
+  <section class="privacy">
+    <div class="container" style="text-align:center;">
+      <div class="sec-label">安心して使える</div>
+      <h2 class="sec-title">あなたの言葉は、安全に守られます</h2>
+      <p class="sec-desc center">広告もトラッキングもありません。<br>データは、あなたのためだけに使われます。</p>
+      <div class="privacy-grid">
+        <div class="priv-item fade-up">
+          <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h4>全データ暗号化</h4>
+          <p>通信・保管ともにTLS/SSL暗号化。あなたのデータのみアクセス可能。</p>
+        </div>
+        <div class="priv-item fade-up d1">
+          <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8760A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h4>広告・トラッキングなし</h4>
+          <p>広告目的でのデータ利用や第三者提供は一切ありません。</p>
+        </div>
+        <div class="priv-item fade-up d2">
+          <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h4>いつでも完全削除</h4>
+          <p>アカウント削除ですべてのデータが完全に消去されます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Pricing ===== -->
+  <section class="pricing">
+    <div class="container" style="text-align:center;">
+      <div class="sec-label">料金プラン</div>
+      <h2 class="sec-title">自分への小さな投資</h2>
+      <p class="sec-desc center">毎日のコーヒー1杯分で、あなただけのAIメンターを。</p>
+      <div class="pricing-step">
+        <div class="pricing-step-item">
+          <div class="pricing-step-dot"></div>
+          <div class="pricing-step-line"></div>
+          <div class="pricing-step-label">今日</div>
+          <div class="pricing-step-sub">7日間無料で<br>全機能お試し</div>
+        </div>
+        <div class="pricing-step-item">
+          <div class="pricing-step-dot"></div>
+          <div class="pricing-step-line"></div>
+          <div class="pricing-step-label">8日目</div>
+          <div class="pricing-step-sub">初月50%オフ<br>¥990で継続</div>
+        </div>
+        <div class="pricing-step-item">
+          <div class="pricing-step-dot"></div>
+          <div class="pricing-step-label">2ヶ月目〜</div>
+          <div class="pricing-step-sub">月額¥1,980<br>いつでも解約OK</div>
+        </div>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card fade-up">
+          <div class="trial-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>7日間無料トライアル付き</div>
+          <div class="price-plan">月額プラン</div>
+          <div class="price-amount">&yen;1,980<span>/月</span></div>
+          <div class="price-note">いつでもキャンセル可能</div>
+          <div class="price-offer">初月50%オフ &yen;990</div>
+          <div class="price-daily">1日あたり約 &yen;66</div>
+          <ul class="price-features">
+            <li><span class="pf-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></span>朝・夜セッション無制限</li>
+            <li><span class="pf-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></span>フリートーク（1日5回）</li>
+            <li><span class="pf-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></span>週次AIレポート</li>
+            <li><span class="pf-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></span>タスク管理 & カレンダー連携</li>
+            <li><span class="pf-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></span>2人のAIメンター選択</li>
+          </ul>
+        </div>
+        <div class="price-card pop fade-up d1">
+          <div class="price-badge">2ヶ月分おトク</div>
+          <div class="trial-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>7日間無料トライアル付き</div>
+          <div class="price-plan">年額プラン</div>
+          <div class="price-amount">&yen;19,800<span>/年</span></div>
+          <div class="price-note">月あたり &yen;1,650</div>
+          <div class="price-offer">17% OFF</div>
+          <div class="price-daily">1日あたり約 &yen;54</div>
+          <ul class="price-features">
+            <li><span class="pf-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></span>月額プランの全機能</li>
+            <li><span class="pf-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></span>年間で約 &yen;3,960 おトク</li>
+            <li><span class="pf-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></span>7日間無料トライアル</li>
+            <li><span class="pf-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></span>いつでもキャンセル可能</li>
+            <li><span class="pf-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></span>更新24時間前までに解約可</li>
+          </ul>
+        </div>
+      </div>
+      <p class="trial-note">すべてのプランに7日間の無料トライアルが含まれます。無料期間中はいつでもキャンセル可能で、料金は一切かかりません。</p>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="faq">
+    <div class="container" style="text-align:center;">
+      <div class="sec-label">よくある質問</div>
+      <h2 class="sec-title">気になるポイント</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            AIとの対話で本当に効果はありますか？
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">Hearthはコーチング理論（GROW、ソクラテス式対話）に基づいて設計されています。AIが「答え」を教えるのではなく、あなた自身が気づけるよう問いかける設計です。対話のたびに理解が蓄積されるため、使い込むほど的確な問いかけが届くようになります。</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            声を出せない場所ではどうすればいいですか？
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">テキスト入力でも同じように対話できます。設定画面からテキストモードに切り替えるか、セッション中にいつでも「テキストで入力する」を選べます。通勤中や寝る前のベッドの中では、テキストで使っている方も多いです。</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            ChatGPTに相談するのと何が違いますか？
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">3つの違いがあります。(1) 朝と夜の決まったリズムで習慣化を促す構造があること (2) 対話のたびに「あなたへの理解」が蓄積され、過去の文脈を踏まえた対話になること (3) 週次レポートで自分の思考パターンを客観視できること。ChatGPTは毎回ゼロからですが、Hearthは使うほどあなた専用になります。</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            無料トライアル中にキャンセルできますか？
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">はい、7日間の無料トライアル中はいつでもキャンセルでき、料金は一切かかりません。合わないと思ったら、設定画面またはApp Storeのサブスクリプション管理から簡単に解約できます。</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            対話の内容は誰かに見られませんか？
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">あなたの対話データは暗号化して保管され、あなた以外はアクセスできません。広告目的でのデータ利用や第三者提供は一切ありません。アカウントを削除すると、すべてのデータが完全に消去されます。</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            対面のコーチングサービスとは何が違いますか？
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">対面コーチングは月3〜5万円・月1〜2回・予約制が一般的です。Hearthは月1,980円で毎日利用でき、予約不要・24時間いつでも対話できます。人間のコーチとは異なる強みとして、恥ずかしさゼロで本音を出しやすいこと、過去の対話が蓄積され一貫した対話が続くことがあります。</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Final CTA ===== -->
+  <section class="final-cta" id="download">
+    <div class="final-inner fade-up">
+      <h2 class="final-tagline">今日から、<br><em>自分と対話する習慣</em>を。</h2>
+      <p class="final-desc">朝5分の対話から始めてみませんか。<br>あなたの声が、あなた自身の道しるべになります。</p>
+      <div class="final-store">
+        <a href="#" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.89C10.1 6.87 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+          7日間無料で試す
+        </a>
+        <div class="btn-android-hero">Android 準備中</div>
+      </div>
+      <p class="final-micro"><strong>7日間完全無料</strong> / 合わなければいつでもキャンセル</p>
+    </div>
+  </section>
+
+  <!-- ===== Lead Capture ===== -->
+  <section class="lead">
+    <div class="lead-inner fade-up">
+      <h3>「今はまだ...」という方へ</h3>
+      <p>キャリアや自己理解に役立つヒントを、<br>週1回・3分で読めるメールでお届けします。</p>
+      <div class="lead-form">
+        <input type="email" placeholder="メールアドレス" aria-label="メールアドレス">
+        <button type="button">登録する</button>
+      </div>
+      <p class="lead-note">配信停止はワンクリック。スパムは送りません。</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo"><span>H</span>earth</div>
+      <ul class="footer-links">
+        <li><a href="/privacy/">プライバシーポリシー</a></li>
+        <li><a href="/terms/">利用規約</a></li>
+        <li><a href="/support/">お問い合わせ</a></li>
+      </ul>
+      <div class="footer-copy">&copy; 2026 Hearth. All rights reserved.</div>
+    </div>
   </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    const fl = document.getElementById('floatingCta');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      nav.classList.toggle('scrolled', y > 20);
+      fl.classList.toggle('visible', y > 400 && y < document.body.scrollHeight - window.innerHeight - 300);
+    });
+    // Demo tab switching
+    function switchDemo(tab) {
+      document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('demo-' + tab).classList.add('active');
+      event.target.classList.add('active');
+    }
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.fade-up, .fade-scale').forEach(el => obs.observe(el));
+  </script>
+
 </body>
 </html>
