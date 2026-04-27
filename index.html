@@ -182,6 +182,9 @@
     }
     .hero-micro { font-size: 13px; color: var(--text-sub); }
     .hero-micro strong { color: var(--brand-warm); font-weight: 600; }
+    .cta-legal-note { font-size: 11px; color: var(--text-light); margin-top: 6px; }
+    .cta-legal-note a { color: inherit; text-decoration: underline; }
+    .cta-legal-note a:hover { color: var(--brand-warm); }
     .hero-statement {
       display: inline-block;
       margin: -12px 0 28px;
@@ -210,6 +213,30 @@
       background: radial-gradient(ellipse, rgba(232,118,10,0.06) 0%, transparent 70%);
       z-index: -1;
     }
+
+    /* ===== Diagnosis Intro ===== */
+    .diag-intro { padding: 56px 24px; background: var(--warm-bg-alt); text-align: center; }
+    .diag-intro .sec-title { font-size: 26px; }
+    .diag-intro .sec-desc { max-width: 620px; }
+    .diag-features {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      max-width: 760px; margin: 32px auto 0;
+    }
+    .diag-feat {
+      background: var(--white); border-radius: 14px; padding: 20px 16px;
+      border: 1px solid rgba(0,0,0,0.04);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .diag-feat-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: rgba(232,118,10,0.10);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--brand-warm);
+    }
+    .diag-feat-text { text-align: center; }
+    .diag-feat-label { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .diag-feat-desc { font-size: 12px; color: var(--text-sub); line-height: 1.6; }
 
     /* ===== Pain ===== */
     .pain { padding: 80px 24px; background: var(--white); }
@@ -693,6 +720,15 @@
       .sec-label { font-size: 12px; }
       .sec-desc { font-size: 14px; margin-bottom: 36px; }
 
+      /* -- Diagnosis Intro -- */
+      .diag-intro { padding: 40px 16px; }
+      .diag-intro .sec-title { font-size: 22px; }
+      .diag-features { grid-template-columns: 1fr; gap: 10px; margin-top: 24px; }
+      .diag-feat { flex-direction: row; padding: 14px 16px; gap: 14px; align-items: center; }
+      .diag-feat-icon { flex-shrink: 0; }
+      .diag-feat-text { text-align: left; }
+      .diag-feat-label { margin-bottom: 2px; }
+
       /* -- Pain -- */
       .pain { padding: 48px 16px; }
       .pain-grid { grid-template-columns: 1fr; gap: 12px; }
@@ -850,13 +886,52 @@
             </a>
             <div class="btn-android-hero">Android 準備中</div>
           </div>
-          <p class="hero-micro"><strong>60秒の診断</strong>で、あなた専用のメンタリングプランを作成</p>
+          <p class="hero-micro"><strong>60秒の診断</strong>で、あなたに合うメンターと最初の30日の使い方をご提案</p>
+          <p class="cta-legal-note">料金詳細は<a href="/legal/">特定商取引法に基づく表記</a></p>
         </div>
       </div>
       <div class="hero-visual fade-scale d1">
         <div class="hero-phone-glow"></div>
         <div class="hero-phone">
           <img src="assets/screenshot/resized_Simulator Screenshot - iPhone 15 Plus - 2026-04-10 at 21.13.03.png" alt="Hearth ホーム画面" loading="eager">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Diagnosis Intro ===== -->
+  <section class="diag-intro">
+    <div class="container">
+      <div class="sec-label">診断について</div>
+      <h2 class="sec-title">たった5問・60秒</h2>
+      <p class="sec-desc center">日々の悩みのタイプ、使える時間、目指したい変化。<br>答えると、あなたに合うメンター（レイ／ケン）と、<br>最初の30日の使い方をご提案します。</p>
+      <div class="diag-features">
+        <div class="diag-feat fade-up">
+          <div class="diag-feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="diag-feat-text">
+            <div class="diag-feat-label">5問・60秒</div>
+            <p class="diag-feat-desc">短い質問だけ。気軽に答えられます。</p>
+          </div>
+        </div>
+        <div class="diag-feat fade-up d1">
+          <div class="diag-feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          </div>
+          <div class="diag-feat-text">
+            <div class="diag-feat-label">個人情報入力なし</div>
+            <p class="diag-feat-desc">名前・住所・電話番号は不要です。</p>
+          </div>
+        </div>
+        <div class="diag-feat fade-up d2">
+          <div class="diag-feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </div>
+          <div class="diag-feat-text">
+            <div class="diag-feat-label">すぐにアプリで開始</div>
+            <p class="diag-feat-desc">診断結果からそのまま体験できます。</p>
+          </div>
         </div>
       </div>
     </div>
@@ -1203,7 +1278,7 @@
             <td>月額費用</td>
             <td>無料〜$20</td>
             <td>¥30,000〜</td>
-            <td class="col-hearth">診断後にご提案</td>
+            <td class="col-hearth">App Storeで月¥1,980〜<br><span style="font-size:11px;opacity:.8;">（初月¥990 / 50%オフ）</span></td>
           </tr>
           <tr>
             <td>対話の蓄積</td>
@@ -1238,7 +1313,7 @@
   <div class="mid-cta alt">
     <div class="mid-cta-inner">
       <p class="mid-cta-coach">対面コーチング<strong>月3〜5万円</strong>と同じ手法を、<strong>続けやすい価格</strong>で。</p>
-      <p>60秒の診断で、あなたに合うメンターとプランをご提案します。</p>
+      <p>60秒の診断で、あなたに合うメンターと始め方のステップをご提案します。</p>
       <a href="#download" class="btn-primary">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.89C10.1 6.87 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
         あなたに合うメンターを診断する
@@ -1409,7 +1484,8 @@
         </a>
         <div class="btn-android-hero">Android 準備中</div>
       </div>
-      <p class="final-micro"><strong>60秒の診断</strong>で、あなた専用のメンタリングプランを作成</p>
+      <p class="final-micro"><strong>60秒の診断</strong>で、あなたに合うメンターと最初の30日の使い方をご提案</p>
+      <p class="cta-legal-note">料金詳細は<a href="/legal/">特定商取引法に基づく表記</a></p>
     </div>
   </section>
 
