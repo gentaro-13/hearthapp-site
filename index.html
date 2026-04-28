@@ -72,9 +72,8 @@
       font-family: var(--font-en); font-size: 22px; font-weight: 700;
       letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px;
     }
-    .nav-logo-text { letter-spacing: -0.5px; }
-    .nav-logo-text span { color: var(--brand-warm); }
-    .nav-logo img { width: 28px; height: 28px; border-radius: 7px; }
+    .nav-logo .nav-icon { width: 28px; height: 28px; border-radius: 7px; }
+    .nav-logo .nav-wordmark { height: 24px; width: auto; display: block; }
 
     /* ===== Floating CTA ===== */
     .floating-cta {
@@ -703,8 +702,9 @@
 
       /* -- Nav -- */
       .nav-inner { padding: 0 16px; height: 56px; }
-      .nav-logo { font-size: 20px; gap: 6px; }
-      .nav-logo img { width: 24px; height: 24px; border-radius: 6px; }
+      .nav-logo { gap: 6px; }
+      .nav-logo .nav-icon { width: 24px; height: 24px; border-radius: 6px; }
+      .nav-logo .nav-wordmark { height: 20px; }
 
       /* -- Floating CTA -- */
       .floating-cta { padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
@@ -851,7 +851,8 @@
   <nav class="nav" id="nav">
     <div class="nav-inner">
       <div class="nav-logo">
-        <img src="assets/icon.png" alt="Hearth" width="28" height="28"><div class="nav-logo-text"><span>H</span>earth</div>
+        <img src="assets/icon.png" alt="" class="nav-icon" width="28" height="28">
+        <img src="assets/Hearth-logo-trans.png" alt="Hearth" class="nav-wordmark" width="86" height="48">
       </div>
     </div>
   </nav>
